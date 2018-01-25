@@ -3,8 +3,9 @@ require 'unirest'
 system "clear"
 
 puts "You have engaged your Contacts Program"
-puts "Please choose an option: "
+puts "Please, choose an option: "
 puts "      [1] Show all contacts"
+puts "          [1.1] Search contacts by name"
 puts "      [2] Show one contact"
 puts "      [3] Create a new contact"
 puts "      [4] Update a contact"
@@ -18,6 +19,12 @@ if input_option == "1"
   contacts = response.body
   puts JSON.pretty_generate(contacts)
 
+elsif input_option == "1.1"
+  print "Enter a name to search by: "
+  input_name = gets.chomp
+  response = Unirest.get("http://localhost:3000/contacts?search=#{input_name}")
+  contacts = response.body
+  puts JSON.pretty_generate(contacts)
 elsif input_option == "2"
   print "Enter a contact id: "
   input_id = gets.chomp
@@ -25,7 +32,6 @@ elsif input_option == "2"
   response = Unirest.get("http://localhost:3000/contacts/#{input_id}")
   contact = response.body
   puts JSON.pretty_generate(contact)
-
 elsif input_option == "3"
   puts "Enter information for a new contact"
   client_params = {}
@@ -53,22 +59,18 @@ elsif input_option == "3"
                           parameters: client_params
                           )
   if response.code == 200
-    contact = response.body 
-    puts JSON.pretty_generate(contact_data)
+    contact = response.body
+    puts JSON.pretty_generate(contact)
   else
     errors = response.body["errors"]
-    puts 
+    puts
     puts "Your contact did not save"
-    "please look at the following reasons"
-    puts "-------------------------------"
+    puts "please look at the following reasons"
+    puts "------------------------------------"
     errors.each do |error|
       puts error
-  end 
-  end 
-
-  contact = response.body
-  puts JSON.pretty_generate(contact)
-
+    end
+  end
 elsif input_option == "4"
   print "Enter a contact id: "
   input_id = gets.chomp
@@ -103,21 +105,20 @@ elsif input_option == "4"
                           "http://localhost:3000/contacts/#{input_id}",
                           parameters: client_params
                           )
-  
+
   if response.code == 200
-    contact = response.body 
-    puts JSON.pretty_generate(contact_data)
+    contact = response.body
+    puts JSON.pretty_generate(contact)
   else
     errors = response.body["errors"]
-    puts 
+    puts
     puts "Your contact did not update"
-    "please look at the following reasons"
-    puts "-------------------------------"
+    puts "please look at the following reasons"
+    puts "------------------------------------"
     errors.each do |error|
       puts error
-  end 
-  end 
-
+    end
+  end
 elsif input_option == "5"
   print "Enter a contact id that you want to delete: "
   input_id = gets.chomp
